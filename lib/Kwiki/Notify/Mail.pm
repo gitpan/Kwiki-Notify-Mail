@@ -1,4 +1,4 @@
-# $Header: /home/staff/peregrin/cvs/Kwiki-Notify-Mail/lib/Kwiki/Notify/Mail.pm,v 1.6 2004/09/01 00:11:53 peregrin Exp $
+# $Header: /home/staff/peregrin/cvs/Kwiki-Notify-Mail/lib/Kwiki/Notify/Mail.pm,v 1.7 2005/01/25 20:49:23 peregrin Exp $
 #
 package Kwiki::Notify::Mail;
 use warnings;
@@ -7,37 +7,45 @@ use Kwiki::Plugin '-Base';
 use mixin 'Kwiki::Installer';
 use MIME::Lite;
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
-const class_id    => 'notify';
+const class_id    => 'notify_mail';
 const class_title => 'Kwiki page edit notification via email';
 const config_file => 'notify_mail.yaml';
 
+
 sub debug {
-    my $debug = $self->config->notify_mail_debug || 0;
+    my $debug = $self->hub->config->notify_mail_debug || 0;
     return $debug;
 }
 
 sub register {
     my $registry = shift;
-    $registry->add(page_hook_store => 'notify');
+    $registry->add(hook => 'page:store',
+		   post => 'notify',
+		  );
 }
 
 sub notify {
+    my $hook = pop;
+    my $page = shift;
+    my $notify_mail_obj = $self->hub->load_class('notify_mail');
+
     my $meta_data = $self->hub->edit->pages->current->metadata;
-    my $site_title = $self->config->site_title;
+    my $site_title = $self->hub->config->site_title;
 
     my $edited_by   = $meta_data->{edit_by}                || 'unknown name';
     my $page_name   = $meta_data->{id}                     || 'unknown page';
-    my $to          = $self->config->notify_mail_to        || 'unknown@unknown';
-    my $from        = $self->config->notify_mail_from      || 'unknown';
-    my $subject     = sprintf($self->config->notify_mail_subject,
+    my $to          = $notify_mail_obj->config->notify_mail_to   || 'unknown@unknown';
+    my $from        = $notify_mail_obj->config->notify_mail_from || 'unknown';
+    my $subject     = sprintf($notify_mail_obj->config->notify_mail_subject,
 			      $site_title,
 			      $page_name,
 			      $edited_by)   || 'unknown';
+
     my $body        = "$site_title page $page_name edited by $edited_by\n";
 
-    $self->mail_it($to,$from,$subject,$body);
+    $notify_mail_obj->mail_it($to,$from,$subject,$body);
     return $self;
 }
 
@@ -73,7 +81,7 @@ Kwiki::Notify::Mail - send an email when a page is updated
 
 =head1 VERSION
 
-Version 0.02
+Version 0.03
 
 =head1 SYNOPSIS
 
@@ -211,3 +219,4 @@ notify_mail_to: nobody@nobody.abc
 notify_mail_from: nobody
 notify_mail_subject: %s wiki page %s updated by %s
 notify_mail_debug: 0
+

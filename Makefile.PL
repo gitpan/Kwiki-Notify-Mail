@@ -11,7 +11,7 @@ WriteMakefile(
     PREREQ_PM => {
 		  'Test::More' => 0,
 		  'MIME::Lite' => 0,
-		  'Kwiki'      => 0.33,
+		  'Kwiki'      => 0.37,
     },
     dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
     clean               => { FILES => 'Kwiki-Notify-Mail-*' },
