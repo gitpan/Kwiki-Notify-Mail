@@ -1,4 +1,4 @@
-# $Header: /home/staff/peregrin/cvs/Kwiki-Notify-Mail/lib/Kwiki/Notify/Mail.pm,v 1.3 2004/08/29 23:43:31 peregrin Exp $
+# $Header: /home/staff/peregrin/cvs/Kwiki-Notify-Mail/lib/Kwiki/Notify/Mail.pm,v 1.6 2004/09/01 00:11:53 peregrin Exp $
 #
 package Kwiki::Notify::Mail;
 use warnings;
@@ -7,12 +7,16 @@ use Kwiki::Plugin '-Base';
 use mixin 'Kwiki::Installer';
 use MIME::Lite;
 
-our $VERSION = '0.01';
-my $DEBUG = 0;
+our $VERSION = '0.02';
+
 const class_id    => 'notify';
 const class_title => 'Kwiki page edit notification via email';
 const config_file => 'notify_mail.yaml';
 
+sub debug {
+    my $debug = $self->config->notify_mail_debug || 0;
+    return $debug;
+}
 
 sub register {
     my $registry = shift;
@@ -21,13 +25,17 @@ sub register {
 
 sub notify {
     my $meta_data = $self->hub->edit->pages->current->metadata;
+    my $site_title = $self->config->site_title;
 
     my $edited_by   = $meta_data->{edit_by}                || 'unknown name';
     my $page_name   = $meta_data->{id}                     || 'unknown page';
     my $to          = $self->config->notify_mail_to        || 'unknown@unknown';
     my $from        = $self->config->notify_mail_from      || 'unknown';
-    my $subject     = $self->config->notify_mail_subject   || 'unknown';
-    my $body        = "Kwiki page $page_name edited by $edited_by\n";
+    my $subject     = sprintf($self->config->notify_mail_subject,
+			      $site_title,
+			      $page_name,
+			      $edited_by)   || 'unknown';
+    my $body        = "$site_title page $page_name edited by $edited_by\n";
 
     $self->mail_it($to,$from,$subject,$body);
     return $self;
@@ -44,7 +52,7 @@ sub mail_it {
 	Data    => $body,
     );
 
-    if ($DEBUG) {
+    if (debug($self)) {
 	open(TEMPFILE,'>','/tmp/kwiki_notify_mail.txt') 
 	    || die "can't open tmp file $!";
 	$msg->print(\*TEMPFILE);
@@ -65,7 +73,7 @@ Kwiki::Notify::Mail - send an email when a page is updated
 
 =head1 VERSION
 
-Version 0.01
+Version 0.02
 
 =head1 SYNOPSIS
 
@@ -113,7 +121,56 @@ Specify the address this is apparently from.
 
 =item * notify_mail_subject
 
-Specify a subject line for the mail message.
+Specify a subject line for the mail message.  You can make use of
+sprintf()-type formatting codes (%s is the only one that is relevant).
+If you put or more %s in the configuration directive it will print out
+the site title, page name and whom it was edited by.  You can can't
+change the order, however.
+
+Examples:
+
+ notify_mail_subject: Kwiki was updated
+
+gives you the Subject: line
+
+ Subject: Kwiki was updated
+
+If your site title (defined in site_title in config.yaml) was
+'ProjectDiscussion', then
+
+ notify_mail_subject: My wiki %s was updated
+
+gives you the Subject: line
+
+ Subject: My wiki ProjectDiscussion was updated
+
+Next you can add the page name with a second %s.  If the updated
+page happened to be 'NextWeeksAgenda', the configuration directive
+
+ notify_mail_subject: My wiki %s page %s was updated
+
+gives you the Subject: line
+
+ Subject: My wiki ProjectDiscussion page NextWeeksAgenda was updated
+
+Finally, a third %s gives you the name of the person who edited the page:
+
+ notify_mail_subject: My wiki %s page %s was updated by %s
+
+ Subject: My wiki ProjectDiscussion page NextWeeksAgenda was updated
+ by PointyHairedBoss
+
+The important thing to remember is that you can have either none or one or two
+or three %s, but you can't change the order.  The default value is
+
+ notify_mail_subject: %s wiki page %s updated by %s
+
+which should be fine for most people.
+
+=item * notify_mail_debug
+
+When set, saves the mail message to /tmp/kwiki_notify_mail.txt instead
+of sending it.
 
 =back
 
@@ -128,6 +185,13 @@ statico.  The style of this module has been adapted from statico's
 Kwiki::Notify::IRC.
 
 =head1 BUGS
+
+The subject line configuration relies on sprintf() which doesn't allow
+you to change the order of what gets printed out.
+
+The debug file is saved to /tmp and should be user configurable.  This
+module was not tested under Windows and certainly /tmp doesn't exist
+there.
 
 Please report any bugs or feature requests to
 C<bug-kwiki-notify-mail@rt.cpan.org>, or through the web interface at
@@ -145,4 +209,5 @@ under the same terms as Perl itself.
 __config/notify_mail.yaml__
 notify_mail_to: nobody@nobody.abc
 notify_mail_from: nobody
-notify_mail_subject: Nobody Kwiki
+notify_mail_subject: %s wiki page %s updated by %s
+notify_mail_debug: 0

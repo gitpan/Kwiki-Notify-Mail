@@ -1,5 +1,10 @@
 Revision history for Kwiki-Notify-Mail
 
+0.02	2004/08/31
+        Subject line can contain site_title, page name and edited_by.
+	Can now set debug flag in config.yaml.
+	Also default subject line is more useful
+	
 0.01    2004/08/29
         First version, released on an unsuspecting world.
 
