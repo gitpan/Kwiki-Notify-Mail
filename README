@@ -1,0 +1,131 @@
+NAME
+    Kwiki::Notify::Mail - send an email when a page is updated
+
+VERSION
+    Version 0.01
+
+SYNOPSIS
+     $ cd /path/to/kwiki
+     $ kwiki -add Kwiki::Notify::Mail
+     $ cat config/notify_mail.yaml >> config.yaml
+     $ edit config.yaml
+
+REQUIRES
+    This module requires MIME::Lite to send email.
+
+DESCRIPTION
+    This module allows you to notify yourself by email when some one updates
+    a page. You can specify the To:, From: and Subject: headers, but the
+    email message body is not currently configurable.
+
+    A sample email looks like:
+
+     Content-Disposition: inline
+     Content-Length: 52
+     Content-Transfer-Encoding: binary
+     Content-Type: text/plain
+     MIME-Version: 1.0
+     X-Mailer: MIME::Lite 3.01 (F2.72; B3.01; Q3.01)
+     Date: Sun, 29 Aug 2004 22:00:31 UT
+     To: geo_bush@casablanca.gov
+     From: nobody@countykerry.ir
+     Subject: Kwiki page update
+
+     Kwiki page LotsOfWikiWords edited by AnonymousGnome
+
+  Configuration Directives
+    * notify_mail_to
+        Specify the mail address you are sending to.
+
+    * notify_mail_from
+        Specify the address this is apparently from.
+
+    * notify_mail_subject
+        Specify a subject line for the mail message.
+
+AUTHOR
+    James Peregrino, "<jperegrino@post.harvard.edu>"
+
+ACKNOWLEDGMENTS
+    The folks at irc::/irc.freenode.net/kwiki, especially alevin and
+    statico. The style of this module has been adapted from statico's
+    Kwiki::Notify::IRC.
+
+BUGS
+    Please report any bugs or feature requests to
+    "bug-kwiki-notify-mail@rt.cpan.org", or through the web interface at
+    <http://rt.cpan.org>. I will be notified, and then you'll automatically
+    be notified of progress on your bug as I make changes.
+
+COPYRIGHT & LICENSE
+    Copyright 2004 James Peregrino, All Rights Reserved.
+
+    This program is free software; you can redistribute it and/or modify it
+    under the same terms as Perl itself.
+
+NAME
+    Kwiki::Notify::Mail - send an email when a page is updated
+
+VERSION
+    Version 0.01
+
+SYNOPSIS
+     $ cd /path/to/kwiki
+     $ kwiki -add Kwiki::Notify::Mail
+     $ cat config/notify_mail.yaml >> config.yaml
+     $ edit config.yaml
+
+REQUIRES
+    This module requires MIME::Lite to send email.
+
+DESCRIPTION
+    This module allows you to notify yourself by email when some one updates
+    a page. You can specify the To:, From: and Subject: headers, but the
+    email message body is not currently configurable.
+
+    A sample email looks like:
+
+     Content-Disposition: inline
+     Content-Length: 52
+     Content-Transfer-Encoding: binary
+     Content-Type: text/plain
+     MIME-Version: 1.0
+     X-Mailer: MIME::Lite 3.01 (F2.72; B3.01; Q3.01)
+     Date: Sun, 29 Aug 2004 22:00:31 UT
+     To: geo_bush@casablanca.gov
+     From: nobody@countykerry.ir
+     Subject: Kwiki page update
+
+     Kwiki page LotsOfWikiWords edited by AnonymousGnome
+
+  Configuration Directives
+
+    * notify_mail_to
+        Specify the mail address you are sending to.
+
+    * notify_mail_from
+        Specify the address this is apparently from.
+
+    * notify_mail_subject
+        Specify a subject line for the mail message.
+
+AUTHOR
+    James Peregrino, "<jperegrino@post.harvard.edu>"
+
+ACKNOWLEDGMENTS
+    The folks at irc::/irc.freenode.net/kwiki, especially alevin and
+    statico. The style of this module has been adapted from statico's
+    Kwiki::Notify::IRC.
+
+BUGS
+    Please report any bugs or feature requests to
+    "bug-kwiki-notify-mail@rt.cpan.org", or through the web interface at
+    http://rt.cpan.org. I will be notified, and then you'll automatically be
+    notified of progress on your bug as I make changes.
+
+COPYRIGHT & LICENSE
+    Copyright 2004 James Peregrino, All Rights Reserved.
+
+    This program is free software; you can redistribute it and/or modify it
+    under the same terms as Perl itself.
+
