@@ -1,5 +1,9 @@
 Revision history for Kwiki-Notify-Mail
 
+0.04    2005/11/11
+        Added notify_mail_topic feature, courtesy of brian@freebsd.org
+        [CPAN #13087]
+
 0.03    2005/01/25
         Works with the latest Kwiki hooking mechanism.
         No new features.

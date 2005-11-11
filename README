@@ -2,7 +2,7 @@ NAME
     Kwiki::Notify::Mail - send an email when a page is updated
 
 VERSION
-    Version 0.02
+    Version 0.04
 
 SYNOPSIS
      $ cd /path/to/kwiki
@@ -35,7 +35,30 @@ DESCRIPTION
 
   Configuration Directives
     * notify_mail_to
-        Specify the mail address you are sending to.
+        Specify the mail address you are sending to. Email will be sent to
+        these addresses for all page updates.
+
+    * notify_mail_topic
+        Specify the mail topic or ConfigPage that is used to decide who to
+        send mail to. The ConfigPage is of the format
+
+            WikiPage: email@domain.com
+
+        WikiPage may be given as a regular expression, and multiple email
+        addresses may be given. For example:
+
+            HomePage: me@my.domain.com
+            .*: bigmailbox@my.domain.com
+            Doc.*: docs@my.domain.com me@my.domain.com
+
+        If you are also using the notify_mail_to directive, any email will
+        also be sent to that address.
+
+        Note: Addresses are separated by spaces. If your message transfer
+        agent expects addresses separated by commas, then use a comma.
+        However in this case you can't also use the notify_mail_to
+        directive, because it will be added to the email From: line with a
+        space.
 
     * notify_mail_from
         Specify the address this is apparently from.
@@ -43,9 +66,11 @@ DESCRIPTION
     * notify_mail_subject
         Specify a subject line for the mail message. You can make use of
         sprintf()-type formatting codes (%s is the only one that is
-        relevant). If you put or more %s in the configuration directive it
-        will print out the site title, page name and whom it was edited by.
-        You can can't change the order, however.
+        relevant). If you put one or more %s in the configuration directive
+        it will print out the site title, page name and whom it was edited
+        by. You may also put $1, $2 and/or $3 in the subject line. They will
+        be replaced with the site title, the page name and whom it was
+        edited by respectively.
 
         Examples:
 
@@ -81,9 +106,17 @@ DESCRIPTION
          Subject: My wiki ProjectDiscussion page NextWeeksAgenda was updated
          by PointyHairedBoss
 
-        The important thing to remember is that you can have either none or
-        one or two or three %s, but you can't change the order. The default
-        value is
+        The important thing to remember is that when using %s, you can't
+        change the order of argument substitution. To do that, you need
+        something like this:
+
+         notify_mail_subject: $3 has updated $2 on $1
+
+        gives you the Subject: line
+
+         Subject: PointyHairedBoss has updated NextWeeksAgenda on ProjectDiscussion
+
+        The default value is
 
          notify_mail_subject: %s wiki page %s updated by %s
 
@@ -101,10 +134,10 @@ ACKNOWLEDGMENTS
     statico. The style of this module has been adapted from statico's
     Kwiki::Notify::IRC.
 
-BUGS
-    The subject line configuration relies on sprintf() which doesn't allow
-    you to change the order of what gets printed out.
+    Brian Somers "<brian@FreeBSD.org>" provided the code and documentation
+    for the notify_mail_topic feature.
 
+BUGS
     The debug file is saved to /tmp and should be user configurable. This
     module was not tested under Windows and certainly /tmp doesn't exist
     there.
